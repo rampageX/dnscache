@@ -15,8 +15,6 @@ const (
 	_IP6Query  = 6
 )
 
-
-
 type Question struct {
 	qname  string
 	qtype  string
@@ -39,7 +37,7 @@ func NewHandler() *GODNSHandler {
 		Cache    *MemoryCache
 	)
 	resolver = &Resolver{}
-	Cache = &MemoryCache{lru.New(MAX_CACHES),  time.Duration(EXPIRE_SECONDS) * time.Second, MAX_CACHES}
+	Cache = &MemoryCache{lru.New(MAX_CACHES), time.Duration(EXPIRE_SECONDS) * time.Second, MAX_CACHES}
 	return &GODNSHandler{resolver, Cache}
 }
 

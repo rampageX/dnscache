@@ -4,19 +4,36 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strconv"
 	"time"
 )
 
 const (
-	MAX_CACHES = 128
+	MAX_CACHES     = 128
 	EXPIRE_SECONDS = 600
 )
 
 func main() {
+	var host string
+	var port int
+	args := os.Args[1:]
+	argslen := len(args)
+	fmt.Println(argslen)
+	host = "127.0.0.2"
+	port = 53
+	if argslen >= 2 {
+		host = args[0]
+		newport, err := strconv.Atoi(args[1])
+		if err != nil {
+			port = 53
+		} else {
+			port = newport
+		}
+	}
 
 	server := &Server{
-		host:     "127.0.0.2",
-		port:     53,
+		host:     host,
+		port:     port,
 		rTimeout: 5 * time.Second,
 		wTimeout: 5 * time.Second,
 	}

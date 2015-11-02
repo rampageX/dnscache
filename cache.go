@@ -1,10 +1,10 @@
 package main
 
 import (
-	"time"
-	"github.com/miekg/dns"
 	"errors"
 	"github.com/golang/groupcache/lru"
+	"github.com/miekg/dns"
+	"time"
 )
 
 type Mesg struct {
@@ -21,8 +21,8 @@ type Cache interface {
 
 type MemoryCache struct {
 	CacheStorage *lru.Cache
-	Expire   time.Duration
-	Maxcount int
+	Expire       time.Duration
+	Maxcount     int
 }
 
 func (c *MemoryCache) Get(key string) (*dns.Msg, error) {
@@ -52,8 +52,6 @@ func (c *MemoryCache) Remove(key string) {
 	c.CacheStorage.Remove(key)
 }
 
-
 func (c *MemoryCache) Length() int {
 	return c.CacheStorage.Len()
 }
-
