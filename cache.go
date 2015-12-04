@@ -26,7 +26,7 @@ type MemoryCache struct {
 }
 
 func (c *MemoryCache) Get(key string) (*dns.Msg, error) {
-	mesg, ok := c.CacheStorage.Get(key)	
+	mesg, ok := c.CacheStorage.Get(key)
 	if !ok {
 		return nil, errors.New("Key not found")
 	}
