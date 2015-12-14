@@ -1,12 +1,12 @@
 language: go
 
 go:
-    - 1.4
     - 1.5
 
 
 script:
+    - go get -u -v
     - go get github.com/tools/godep
-    - godep get
+    - godep get -v
     - godep go build -v
     - ls -l
