@@ -9,8 +9,7 @@ import (
 )
 
 const (
-	MAX_CACHES     = 128
-	EXPIRE_SECONDS = 600
+	MAX_CACHES     = 1024
 )
 
 func main() {
