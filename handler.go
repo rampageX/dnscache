@@ -50,9 +50,10 @@ func (h *GODNSHandler) do(Net string, w dns.ResponseWriter, req *dns.Msg) {
 
 	IPQuery := h.isIPQuery(q)
 	key := fmt.Sprintf("%s-%s", h.GetHour(), Q.String())
+	fmt.Println("Cache key: ", key)
 	if IPQuery > 0 {
 		mesg, ok := h.Cache.Get(key)
-		if ok == true {
+		if ok == true {			
 			fmt.Println("Hit cache", Q.String())
 			rmesg := mesg.(*dns.Msg)
 			rmesg.Id = req.Id
