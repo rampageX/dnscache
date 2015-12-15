@@ -78,8 +78,8 @@ func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error
 // Namservers return the array of nameservers, with port number appended.
 // '#' in the name is treated as port separator, as with dnsmasq.
 func (r *Resolver) Nameservers() (ns []string) {
-	ns = append(ns, "8.8.4.4:53")
-	ns = append(ns, "8.8.8.8:443")
+	ns = append(ns, "4.2.2.2:53")
+	ns = append(ns, "4.2.2.3:53")
 	return
 }
 
