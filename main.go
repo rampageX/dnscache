@@ -18,7 +18,7 @@ func main() {
 	args := os.Args[1:]
 	argslen := len(args)
 	fmt.Println(argslen)
-	host = "127.0.0.2"
+	host = "127.0.0.1"
 	port = 53
 	if argslen >= 2 {
 		host = args[0]
