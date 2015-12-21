@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	MAX_CACHES     = 1024
+	MAX_CACHES = 1024
 )
 
 func main() {

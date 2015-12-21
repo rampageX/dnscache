@@ -53,11 +53,11 @@ func (h *GODNSHandler) do(Net string, w dns.ResponseWriter, req *dns.Msg) {
 	fmt.Println("Cache key: ", key)
 	if IPQuery > 0 {
 		mesg, ok := h.Cache.Get(key)
-		if ok == true {			
+		if ok == true {
 			fmt.Println("Hit cache", Q.String())
 			rmesg := mesg.(*dns.Msg)
 			rmesg.Id = req.Id
-			w.WriteMsg(rmesg)
+			w.WriteMsg(BuildDNSMsg(rmesg))
 			return
 		}
 	}
@@ -70,7 +70,7 @@ func (h *GODNSHandler) do(Net string, w dns.ResponseWriter, req *dns.Msg) {
 		return
 	}
 
-	w.WriteMsg(mesg)
+	w.WriteMsg(BuildDNSMsg(mesg))
 
 	if IPQuery > 0 && len(mesg.Answer) > 0 {
 		h.Cache.Add(key, mesg)
@@ -78,6 +78,11 @@ func (h *GODNSHandler) do(Net string, w dns.ResponseWriter, req *dns.Msg) {
 	}
 }
 
+func BuildDNSMsg(msg *dns.Msg) *dns.Msg {
+	msg.Compress = true
+	fmt.Println(msg)
+	return msg
+}
 func (h *GODNSHandler) DoTCP(w dns.ResponseWriter, req *dns.Msg) {
 	h.do("tcp", w, req)
 }

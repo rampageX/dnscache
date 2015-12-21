@@ -42,7 +42,7 @@ func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error
 				return
 			}
 		} else {
-			fmt.Println("resolv ", UnFqdn(qname), " on ", nameserver, c.Net, rtt)
+			fmt.Println("resolv ", UnFqdn(qname), " on ", nameserver, c.Net, rtt, r.String(), r.Len())
 		}
 		select {
 		case res <- r:
