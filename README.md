@@ -1,8 +1,20 @@
 #  DNS Cache
 
 This is a DNS Cache server for local network
+You need golang 1.5.2 + to compile dnscache
 
-It will listen on 127.0.0.2:53 , both UDP/TCP port
+## Install
+
+
+```
+export GO15VENDOREXPERIMENT=1
+go get github.com/masterminds/glide
+glide install
+go build -v
+sudo ./dnscache
+```
+It will listen on 127.0.0.1:53 , both UDP/TCP port
+
 
 ## Donate me please
 
