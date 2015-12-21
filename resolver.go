@@ -87,5 +87,5 @@ func (r *Resolver) Nameservers() (ns []string) {
 }
 
 func (r *Resolver) Timeout() time.Duration {
-	return time.Duration(2) * time.Second
+	return time.Duration(30) * time.Second
 }
