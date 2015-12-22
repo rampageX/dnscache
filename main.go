@@ -10,6 +10,7 @@ import (
 
 const (
 	MAX_CACHES = 1024
+	TIMEOUT    = 30
 )
 
 func main() {
@@ -33,8 +34,8 @@ func main() {
 	server := &Server{
 		host:     host,
 		port:     port,
-		rTimeout: 5 * time.Second,
-		wTimeout: 5 * time.Second,
+		rTimeout: TIMEOUT * time.Second,
+		wTimeout: TIMEOUT * time.Second,
 	}
 
 	server.Run()
