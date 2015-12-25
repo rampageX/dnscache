@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	MAX_CACHES = 1024
+	MAX_CACHES = 8192
 	TIMEOUT    = 30
 )
 
@@ -21,8 +21,10 @@ func main() {
 	fmt.Println(argslen)
 	host = "127.0.0.1"
 	port = 53
-	if argslen >= 2 {
+	if argslen >= 1 {
 		host = args[0]
+	}
+	if argslen >= 2 {
 		newport, err := strconv.Atoi(args[1])
 		if err != nil {
 			port = 53
