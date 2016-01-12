@@ -14,7 +14,7 @@ type Resolver struct {
 
 func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error) {
 	c := &dns.Client{
-		Net:          "tcp", //Always performance TCP dns query
+		Net:          PROTO, //Always performance TCP dns query
 		ReadTimeout:  r.Timeout(),
 		WriteTimeout: r.Timeout(),
 	}

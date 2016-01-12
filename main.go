@@ -13,6 +13,10 @@ const (
 	TIMEOUT    = 30
 )
 
+var (
+	PROTO = "tcp"
+)
+
 func main() {
 	var host string
 	var port int
@@ -31,6 +35,9 @@ func main() {
 		} else {
 			port = newport
 		}
+	}
+	if argslen >= 3 {
+		PROTO = args[2]
 	}
 
 	server := &Server{
