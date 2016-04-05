@@ -14,7 +14,7 @@ const (
 )
 
 var (
-	PROTO = "tcp"
+	PROTO = "udp"
 )
 
 func main() {
@@ -30,9 +30,7 @@ func main() {
 	}
 	if argslen >= 2 {
 		newport, err := strconv.Atoi(args[1])
-		if err != nil {
-			port = 53
-		} else {
+		if err == nil {
 			port = newport
 		}
 	}
