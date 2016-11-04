@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/golang/groupcache/lru"
 	"github.com/miekg/dns"
+	"gopkg.in/fatih/pool.v2"
+	"net"
 	"time"
 )
 
@@ -42,6 +44,19 @@ func NewHandler() *GODNSHandler {
 func (h *GODNSHandler) GetHour() string {
 	return time.Now().Format("2006010215")
 }
+
+func (h *GODNSHandler) PreparePool() {
+	pools := make([]pool.Pool, 0)
+	for _, nsaddr := range NSADDRS {
+		fmt.Println("try to connect to ", nsaddr)
+		p, err := pool.NewChannelPool(1, 10, func() (net.Conn, error) { return net.Dial("tcp", nsaddr) })
+		if err == nil {
+			pools = append(pools, p)
+			h.resolver.NameserversPool = pools
+		}
+	}
+}
+
 func (h *GODNSHandler) do(Net string, w dns.ResponseWriter, req *dns.Msg) {
 	q := req.Question[0]
 	Q := Question{UnFqdn(q.Name), dns.TypeToString[q.Qtype], dns.ClassToString[q.Qclass]}

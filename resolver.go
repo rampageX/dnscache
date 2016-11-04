@@ -3,14 +3,16 @@ package main
 import (
 	"errors"
 	"fmt"
-	"strings"
-	"sync"
+	//"sync"
 	"time"
 
 	"github.com/miekg/dns"
+	"gopkg.in/fatih/pool.v2"
+	"sync"
 )
 
 type Resolver struct {
+	NameserversPool []pool.Pool
 }
 
 func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error) {
@@ -26,11 +28,30 @@ func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error
 
 	res := make(chan *dns.Msg, 1)
 	var wg sync.WaitGroup
-	L := func(nameserver string) {
+	L := func(nsPool pool.Pool) {
 		defer wg.Done()
-		r, rtt, err := c.Exchange(req, nameserver)
+		//r, rtt, err := c.Exchange(req, nameserver)
+		c, err := nsPool.Get()
 		if err != nil {
-			fmt.Println("socket error on ", qname, nameserver)
+			fmt.Println("socket error when get conn", err)
+			if pc, ok := c.(*pool.PoolConn); ok == true {
+				pc.MarkUnusable()
+			}
+			c.Close()
+			return
+		}
+
+		co := &dns.Conn{Conn: c.(*pool.PoolConn).Conn} // c is your net.Conn
+		err = co.WriteMsg(req)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		r, err := co.ReadMsg()
+		co.Close()
+
+		if err != nil {
+			fmt.Println("socket error on ", qname)
 			fmt.Println("error:", err.Error())
 			return
 		}
@@ -39,26 +60,24 @@ func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error
 		// that it has been verified no such domain existas and ask other resolvers
 		// would make no sense. See more about #20
 		if r != nil && r.Rcode != dns.RcodeSuccess {
-			fmt.Println("Failed to get an valid answer ", qname, nameserver)
+			fmt.Println("Failed to get an valid answer ", qname)
 			if r.Rcode == dns.RcodeServerFailure {
 				return
 			}
 		} else {
-			fmt.Println("resolv ", UnFqdn(qname), " on ", nameserver, c.Net, rtt, r.String(), r.Len())
+			fmt.Println("resolv ", UnFqdn(qname), " on ", r.String(), r.Len())
 		}
 		select {
 		case res <- r:
 		default:
 		}
 	}
-
 	ticker := time.NewTicker(time.Duration(200) * time.Millisecond)
 	defer ticker.Stop()
 	// Start lookup on each nameserver top-down, in every second
-	for _, nameserver := range r.Nameservers() {
+	for _, nspool := range r.NameserversPool {
 		wg.Add(1)
-		go L(nameserver)
-		// but exit early, if we have an answer
+		go L(nspool)
 		select {
 		case r := <-res:
 			return r, nil
@@ -72,19 +91,9 @@ func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error
 	case r := <-res:
 		return r, nil
 	default:
-		return nil, errors.New(fmt.Sprintf("resolv failed on ", qname, " Via ", strings.Join(r.Nameservers(), "; "), net))
+		return nil, errors.New(fmt.Sprintf("resolv failed on ", qname, " Via ", net))
 	}
 
-}
-
-// Namservers return the array of nameservers, with port number appended.
-// '#' in the name is treated as port separator, as with dnsmasq.
-func (r *Resolver) Nameservers() (ns []string) {
-	ns = append(ns, "208.67.222.222:443")
-	ns = append(ns, "208.67.220.220:53")
-	ns = append(ns, "216.146.35.35:53")
-	ns = append(ns, "216.146.36.36:53")
-	return
 }
 
 func (r *Resolver) Timeout() time.Duration {

@@ -23,6 +23,10 @@ func (s *Server) Run() {
 
 	Handler := NewHandler()
 
+	go Handler.PreparePool()
+
+	fmt.Println(Handler.resolver.NameserversPool)
+
 	tcpHandler := dns.NewServeMux()
 	tcpHandler.HandleFunc(".", Handler.DoTCP)
 
