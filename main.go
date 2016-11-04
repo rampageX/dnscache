@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	MAX_CACHES = 655360
+	MAX_CACHES = 8192
 	TIMEOUT    = 30
 )
 
