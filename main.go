@@ -9,12 +9,12 @@ import (
 )
 
 const (
-	MAX_CACHES = 8192
+	MAX_CACHES = 655360
 	TIMEOUT    = 30
 )
 
 var (
-	PROTO = "udp"
+	PROTO = "tcp"
 )
 
 func main() {

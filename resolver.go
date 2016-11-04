@@ -3,10 +3,11 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/miekg/dns"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/miekg/dns"
 )
 
 type Resolver struct {
@@ -17,6 +18,7 @@ func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error
 		Net:          PROTO, //Always performance TCP dns query
 		ReadTimeout:  r.Timeout(),
 		WriteTimeout: r.Timeout(),
+		DialTimeout:  r.Timeout(),
 	}
 	fmt.Println("Connect via : ", c.Net)
 
@@ -78,8 +80,10 @@ func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error
 // Namservers return the array of nameservers, with port number appended.
 // '#' in the name is treated as port separator, as with dnsmasq.
 func (r *Resolver) Nameservers() (ns []string) {
-	ns = append(ns, "8.8.8.8:53")
-	ns = append(ns, "8.8.4.4:53")
+	ns = append(ns, "208.67.222.222:443")
+	ns = append(ns, "208.67.220.220:53")
+	ns = append(ns, "216.146.35.35:53")
+	ns = append(ns, "216.146.36.36:53")
 	return
 }
 
