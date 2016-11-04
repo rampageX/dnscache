@@ -45,15 +45,16 @@ func (h *GODNSHandler) GetHour() string {
 	return time.Now().Format("2006010215")
 }
 
+func (h *GODNSHandler) DoInitPool(nsaddr string) {
+	fmt.Println("try to connect to ", nsaddr)
+	p, err := pool.NewChannelPool(1, 10, func() (net.Conn, error) { return net.Dial("tcp", nsaddr) })
+	if err == nil {
+		h.resolver.NameserversPool = append(h.resolver.NameserversPool, p)
+	}
+}
 func (h *GODNSHandler) PreparePool() {
-	pools := make([]pool.Pool, 0)
 	for _, nsaddr := range NSADDRS {
-		fmt.Println("try to connect to ", nsaddr)
-		p, err := pool.NewChannelPool(1, 10, func() (net.Conn, error) { return net.Dial("tcp", nsaddr) })
-		if err == nil {
-			pools = append(pools, p)
-			h.resolver.NameserversPool = pools
-		}
+		go h.DoInitPool(nsaddr)
 	}
 }
 
