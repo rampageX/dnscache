@@ -10,6 +10,15 @@
 		{
 			"ImportPath": "github.com/miekg/dns",
 			"Rev": "db96a2b759cdef4f11a34506a42eb8d1290c598e"
+		},
+		{
+			"ImportPath": "github.com/pkg/errors",
+			"Comment": "v0.8.0-2-g248dadf",
+			"Rev": "248dadf4e9068a0b3e79f02ed0a610d935de5302"
+		},
+		{
+			"ImportPath": "gopkg.in/fatih/pool.v2",
+			"Rev": "20a0a429c5f93de45c90f5f09ea297c25e0929b3"
 		}
 	]
 }
