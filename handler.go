@@ -81,8 +81,11 @@ func (h *GODNSHandler) do(Net string, w dns.ResponseWriter, req *dns.Msg) {
 	mesg, err := h.resolver.Lookup(Net, req)
 
 	if err != nil {
-		fmt.Println("Resolve query error ", err)
-		dns.HandleFailed(w, req)
+		mesg, err = h.resolver.Lookup(Net, req) // try to lookup again
+		if err != nil {
+			fmt.Println("Resolve query error ", err)
+			dns.HandleFailed(w, req)
+		}
 		return
 	}
 

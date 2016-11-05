@@ -1,14 +1,12 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	//"sync"
-	"time"
-
 	"github.com/miekg/dns"
+	"github.com/pkg/errors"
 	"gopkg.in/fatih/pool.v2"
-	"sync"
+	"time"
 )
 
 type Resolver struct {
@@ -27,9 +25,7 @@ func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error
 	qname := req.Question[0].Name
 
 	res := make(chan *dns.Msg, 1)
-	var wg sync.WaitGroup
 	L := func(nsPool pool.Pool) {
-		defer wg.Done()
 		//r, rtt, err := c.Exchange(req, nameserver)
 		c, err := nsPool.Get()
 		if err != nil {
@@ -67,29 +63,20 @@ func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error
 		} else {
 			fmt.Println("resolv ", UnFqdn(qname), " on ", r.String(), r.Len())
 		}
-		select {
-		case res <- r:
-		default:
-		}
+		res <- r
+
 	}
 	// Start lookup on each nameserver top-down, in every second
 	for _, nspool := range r.NameserversPool {
-		wg.Add(1)
 		go L(nspool)
-		select {
-		case r := <-res:
-			return r, nil
-		}
 	}
-	// wait for all the namservers to finish
-	wg.Wait()
+	timeout := time.After(time.Second * 30)
 	select {
 	case r := <-res:
 		return r, nil
-	default:
-		return nil, errors.New(fmt.Sprintf("resolv failed on ", qname, " Via ", net))
+	case <-timeout:
+		return nil, errors.New("Time out on dns query")
 	}
-
 }
 
 func (r *Resolver) Timeout() time.Duration {
