@@ -59,7 +59,7 @@ forever:
 	for {
 		select {
 		case <-sig:
-			fmt.Println("Signal recieved, now stop and exit")
+			fmt.Println("Signal received, now stop and exit")
 			break forever
 		}
 	}
