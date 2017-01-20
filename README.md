@@ -64,6 +64,11 @@ sudo ./dnscache
 ```
 It will listen on 127.0.0.1:53 , both UDP/TCP port
 
+### Start up dnscache with systemd
+
+If you were using ubuntu 16.04 , centos 7, you can startup dnscache via systemd.service file
+
+see dnscache.service for reference
 
 ## Donate me please
 
