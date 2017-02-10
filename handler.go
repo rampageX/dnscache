@@ -52,6 +52,11 @@ func (h *GODNSHandler) DoInitPool(nsaddr string) {
 	if err == nil {
 		h.resolver.NameserversPool = append(h.resolver.NameserversPool, p)
 	}
+	conn, err := p.Get()
+	if err != nil {
+		fmt.Println(err)
+	}
+	conn.Close()
 }
 func (h *GODNSHandler) PreparePool() {
 	for _, nsaddr := range NSADDRS {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net"
 	"os"
 	"os/signal"
 	"strconv"
@@ -41,7 +42,20 @@ func main() {
 	if argslen >= 3 {
 		PROTO = args[2]
 	}
+	// check network  is online
 
+	for {
+		conn, err := net.Dial("tcp", "208.67.222.222:443")
+		if err != nil {
+			fmt.Println("Failed to connect network, will sleep for 5s")
+			fmt.Println(err)
+			time.Sleep(5 * time.Second)
+		} else {
+			conn.Close()
+			fmt.Println("Success connect to 208.67.222.222:443")
+			break
+		}
+	}
 	server := &Server{
 		host:     host,
 		port:     port,
