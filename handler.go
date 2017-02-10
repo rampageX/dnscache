@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"net"
+	"time"
+
 	"github.com/golang/groupcache/lru"
 	"github.com/miekg/dns"
 	"gopkg.in/fatih/pool.v2"
-	"net"
-	"time"
 )
 
 const (
@@ -46,7 +47,7 @@ func (h *GODNSHandler) GetHour() string {
 }
 
 func (h *GODNSHandler) DoInitPool(nsaddr string) {
-	fmt.Println("try to connect to ", nsaddr)
+	//fmt.Println("try to connect to ", nsaddr)
 	p, err := pool.NewChannelPool(1, 10, func() (net.Conn, error) { return net.Dial("tcp", nsaddr) })
 	if err == nil {
 		h.resolver.NameserversPool = append(h.resolver.NameserversPool, p)
@@ -62,15 +63,15 @@ func (h *GODNSHandler) do(Net string, w dns.ResponseWriter, req *dns.Msg) {
 	q := req.Question[0]
 	Q := Question{UnFqdn(q.Name), dns.TypeToString[q.Qtype], dns.ClassToString[q.Qclass]}
 
-	fmt.Println("DNS Lookup ", Q.String())
+	//fmt.Println("DNS Lookup ", Q.String())
 
 	IPQuery := h.isIPQuery(q)
 	key := fmt.Sprintf("%s-%s", h.GetHour(), Q.String())
-	fmt.Println("Cache key: ", key)
+	//fmt.Println("Cache key: ", key)
 	if IPQuery > 0 {
 		mesg, ok := h.Cache.Get(key)
 		if ok == true {
-			fmt.Println("Hit cache", Q.String())
+			//fmt.Println("Hit cache", Q.String())
 			rmesg := mesg.(*dns.Msg)
 			rmesg.Id = req.Id
 			w.WriteMsg(BuildDNSMsg(rmesg))
@@ -83,7 +84,7 @@ func (h *GODNSHandler) do(Net string, w dns.ResponseWriter, req *dns.Msg) {
 	if err != nil {
 		mesg, err = h.resolver.Lookup(Net, req) // try to lookup again
 		if err != nil {
-			fmt.Println("Resolve query error ", err)
+			//		fmt.Println("Resolve query error ", err)
 			dns.HandleFailed(w, req)
 		}
 		return
@@ -93,13 +94,13 @@ func (h *GODNSHandler) do(Net string, w dns.ResponseWriter, req *dns.Msg) {
 
 	if IPQuery > 0 && len(mesg.Answer) > 0 {
 		h.Cache.Add(key, mesg)
-		fmt.Println("Insert into cache", Q.String())
+		//	fmt.Println("Insert into cache", Q.String())
 	}
 }
 
 func BuildDNSMsg(msg *dns.Msg) *dns.Msg {
 	msg.Compress = true
-	fmt.Println(msg)
+	//fmt.Println(msg)
 	return msg
 }
 func (h *GODNSHandler) DoTCP(w dns.ResponseWriter, req *dns.Msg) {

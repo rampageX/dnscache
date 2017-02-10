@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"fmt"
+
 	"github.com/miekg/dns"
 )
 
@@ -25,7 +26,7 @@ func (s *Server) Run() {
 
 	go Handler.PreparePool()
 
-	fmt.Println(Handler.resolver.NameserversPool)
+	//fmt.Println(Handler.resolver.NameserversPool)
 
 	tcpHandler := dns.NewServeMux()
 	tcpHandler.HandleFunc(".", Handler.DoTCP)

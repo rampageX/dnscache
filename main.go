@@ -26,7 +26,7 @@ func main() {
 	var port int
 	args := os.Args[1:]
 	argslen := len(args)
-	fmt.Println(argslen)
+	//fmt.Println(argslen)
 	host = "127.0.0.1"
 	port = 53
 	if argslen >= 1 {

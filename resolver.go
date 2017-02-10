@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	//"sync"
+	"time"
+
 	"github.com/miekg/dns"
 	"github.com/pkg/errors"
 	"gopkg.in/fatih/pool.v2"
-	"time"
 )
 
 type Resolver struct {
@@ -14,14 +15,6 @@ type Resolver struct {
 }
 
 func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error) {
-	c := &dns.Client{
-		Net:          PROTO, //Always performance TCP dns query
-		ReadTimeout:  r.Timeout(),
-		WriteTimeout: r.Timeout(),
-		DialTimeout:  r.Timeout(),
-	}
-	fmt.Println("Connect via : ", c.Net)
-
 	qname := req.Question[0].Name
 
 	res := make(chan *dns.Msg, 1)
@@ -61,7 +54,7 @@ func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error
 				return
 			}
 		} else {
-			fmt.Println("resolv ", UnFqdn(qname), " on ", r.String(), r.Len())
+			//fmt.Println("resolv ", UnFqdn(qname), " on ", r.String(), r.Len())
 		}
 		res <- r
 
