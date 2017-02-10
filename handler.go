@@ -16,6 +16,7 @@ const (
 	_IP6Query  = 6
 )
 
+// Question : dns query struct
 type Question struct {
 	qname  string
 	qtype  string
@@ -26,11 +27,13 @@ func (q *Question) String() string {
 	return q.qname + " " + q.qclass + " " + q.qtype
 }
 
+// GODNSHandler : dns handler struct
 type GODNSHandler struct {
 	resolver *Resolver
 	Cache    *lru.Cache
 }
 
+// NewHandler : create new DNS handler
 func NewHandler() *GODNSHandler {
 
 	var (
@@ -42,10 +45,12 @@ func NewHandler() *GODNSHandler {
 	return &GODNSHandler{resolver, Cache}
 }
 
+// GetHour : get hour format string
 func (h *GODNSHandler) GetHour() string {
 	return time.Now().Format("2006010215")
 }
 
+// DoInitPool : Do Initialize Pool
 func (h *GODNSHandler) DoInitPool(nsaddr string) {
 	//fmt.Println("try to connect to ", nsaddr)
 	p, err := pool.NewChannelPool(1, 10, func() (net.Conn, error) { return net.Dial("tcp", nsaddr) })
@@ -58,6 +63,8 @@ func (h *GODNSHandler) DoInitPool(nsaddr string) {
 	}
 	conn.Close()
 }
+
+// PreparePool : To prepare pool for use
 func (h *GODNSHandler) PreparePool() {
 	for _, nsaddr := range NSADDRS {
 		go h.DoInitPool(nsaddr)
@@ -103,15 +110,19 @@ func (h *GODNSHandler) do(Net string, w dns.ResponseWriter, req *dns.Msg) {
 	}
 }
 
+// BuildDNSMsg : to build dns msg for response
 func BuildDNSMsg(msg *dns.Msg) *dns.Msg {
 	msg.Compress = true
 	//fmt.Println(msg)
 	return msg
 }
+
+// DoTCP : do tcp dns resolve
 func (h *GODNSHandler) DoTCP(w dns.ResponseWriter, req *dns.Msg) {
 	h.do("tcp", w, req)
 }
 
+// DoUDP : do udp dns resolve
 func (h *GODNSHandler) DoUDP(w dns.ResponseWriter, req *dns.Msg) {
 	h.do("udp", w, req)
 }
@@ -131,6 +142,7 @@ func (h *GODNSHandler) isIPQuery(q dns.Question) int {
 	}
 }
 
+// UnFqdn : process and return dns msg
 func UnFqdn(s string) string {
 	if dns.IsFqdn(s) {
 		return s[:len(s)-1]
