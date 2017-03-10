@@ -9,6 +9,7 @@ import (
 	"github.com/miekg/dns"
 )
 
+//Server the server struct
 type Server struct {
 	host     string
 	port     int
@@ -16,10 +17,12 @@ type Server struct {
 	wTimeout time.Duration
 }
 
+//Addr the server address
 func (s *Server) Addr() string {
 	return s.host + ":" + strconv.Itoa(s.port)
 }
 
+//Run set up and running the server
 func (s *Server) Run() {
 
 	Handler := NewHandler()

@@ -41,7 +41,7 @@ func NewHandler() *GODNSHandler {
 		Cache    *lru.Cache
 	)
 	resolver = &Resolver{}
-	Cache = lru.New(MAX_CACHES)
+	Cache = lru.New(MaxCaches)
 	return &GODNSHandler{resolver, Cache}
 }
 
@@ -66,7 +66,7 @@ func (h *GODNSHandler) DoInitPool(nsaddr string) {
 
 // PreparePool : To prepare pool for use
 func (h *GODNSHandler) PreparePool() {
-	for _, nsaddr := range NSADDRS {
+	for _, nsaddr := range NsAddrs {
 		go h.DoInitPool(nsaddr)
 	}
 }

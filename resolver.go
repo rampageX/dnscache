@@ -10,10 +10,12 @@ import (
 	"gopkg.in/fatih/pool.v2"
 )
 
+//Resolver the resolver struct
 type Resolver struct {
 	NameserversPool []pool.Pool
 }
 
+//Lookup do Lookup with the resolver
 func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error) {
 	qname := req.Question[0].Name
 
@@ -72,6 +74,7 @@ func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error
 	}
 }
 
+//Timeout set the timeout
 func (r *Resolver) Timeout() time.Duration {
 	return time.Duration(30) * time.Second
 }
