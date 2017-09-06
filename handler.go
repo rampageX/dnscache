@@ -5,8 +5,8 @@ import (
 	"net"
 	"time"
 
-	"github.com/golang/groupcache/lru"
 	"github.com/miekg/dns"
+	lru "github.com/netroby/fastlru"
 	"gopkg.in/fatih/pool.v2"
 )
 
