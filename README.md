@@ -3,7 +3,7 @@
 This is a DNS Cache server for local network. For MacOSX, Linux User. 
 Not test for Windows
 
-You need golang 1.5+ to compile dnscache
+You need golang 1.5+ to compile dnscache, Tested for golang 1.8.3
 
 ## Features
 
