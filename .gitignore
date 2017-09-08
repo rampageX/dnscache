@@ -1,6 +1,5 @@
 /bin
 *.iml
 .idea/
-vendor
 dnscache
 *.lock
