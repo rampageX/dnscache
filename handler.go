@@ -52,16 +52,27 @@ func (h *GODNSHandler) GetHour() string {
 
 // DoInitPool : Do Initialize Pool
 func (h *GODNSHandler) DoInitPool(nsaddr string) {
-	//fmt.Println("try to connect to ", nsaddr)
-	p, err := pool.NewChannelPool(1, 10, func() (net.Conn, error) { return net.Dial("tcp", nsaddr) })
+	fmt.Println("DoInitPool, try to connect to ", nsaddr)
+	p, err := pool.NewChannelPool(5, 30, func() (net.Conn, error) {
+		var d = net.Dialer{
+			KeepAlive: time.Duration(Timeout),
+		}
+		return d.Dial("tcp", nsaddr)
+	})
 	if err == nil {
 		h.resolver.NameserversPool = append(h.resolver.NameserversPool, p)
 	}
 	conn, err := p.Get()
+	defer conn.Close()
 	if err != nil {
+		fmt.Println("error when get conn from pool")
 		fmt.Println(err)
+		if pc, ok := conn.(*pool.PoolConn); ok == true {
+			pc.MarkUnusable()
+			pc.Close()
+		}
 	}
-	conn.Close()
+	fmt.Println(fmt.Sprintln("the pool size: ", p.Len()))
 }
 
 // PreparePool : To prepare pool for use
