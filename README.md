@@ -5,6 +5,14 @@ Not test for Windows
 
 You need golang 1.8+ to compile dnscache, Tested for golang 1.8.3
 
+## Join us
+
+Matrix chat 
+
+![https://matrix.to/#/+yskm:matrix.org](https://yskm.dev/matrix.png)
+
+[https://matrix.to/#/+yskm:matrix.org](https://matrix.to/#/+yskm:matrix.org)
+
 ## Features
 
 1. Tcp conn to upstream
