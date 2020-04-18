@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"net"
+	"strings"
+
 	//"sync"
 	"time"
 
@@ -23,34 +26,36 @@ func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error
 
 	L := func(nsPool pool.Pool) {
 
-		for i := 0; i < 10; i++ {
+		for {
 			//r, rtt, err := c.Exchange(req, nameserver)
 			fmt.Println(fmt.Sprintln("The conn pool size: ", nsPool.Len()))
 
 			c, err := nsPool.Get()
+
 			defer c.Close()
 			if err != nil {
-				if pc, ok := c.(*pool.PoolConn); ok == true {
-					pc.MarkUnusable()
-					pc.Close()
+				eMsg := logAndProcessErr(qname, err, c)
+				if eMsg == "EOF" || strings.HasSuffix(eMsg, "use of closed network connection") {
+					fmt.Println("Try again")
+					continue
 				}
-				return
 			}
 
 			co := &dns.Conn{Conn: c.(*pool.PoolConn).Conn} // c is your net.Conn
 
 			_ = co.WriteMsg(req) // No handler write error
 			r, err := co.ReadMsg()
-			defer co.Close()
-
+			//释放资源
+			co = nil
+			defer c.(*pool.PoolConn).Close()
 			if err != nil {
-				fmt.Println("socket error on ", qname)
-				fmt.Println("error:", err.Error())
+				eMsg := logAndProcessErr(qname, err, c)
+				if eMsg == "EOF" || strings.HasSuffix(eMsg, "use of closed network connection") {
 
-				if pc, ok := c.(*pool.PoolConn); ok {
-					pc.MarkUnusable()
-					pc.Close()
+					fmt.Println("Try again")
+					continue
 				}
+
 			}
 			// If SERVFAIL happen, should return immediately and try another upstream resolver.
 			// However, other Error code like NXDOMAIN is an clear response stating
@@ -64,11 +69,11 @@ func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error
 			}
 			if r != nil && r.Rcode == dns.RcodeSuccess {
 				fmt.Println("resolv ", UnFqdn(qname), " on ", r.String(), r.Len())
-				res <- r
-				break
-			}
-		}
 
+			}
+			res <- r
+			break
+		}
 	}
 	// Start lookup on each nameserver top-down, in every second
 	for _, nspool := range r.NameserversPool {
@@ -83,6 +88,23 @@ func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error
 		return r, nil
 	case <-timeout:
 		return nil, errors.New("Time out on dns query")
+	}
+}
+
+func logAndProcessErr(qname string, err error, c net.Conn) string {
+	fmt.Println("socket error on ", qname)
+	eMsg := err.Error()
+	fmt.Printf("error:%+v\n", err)
+
+	tidyConn(c)
+	fmt.Printf("eMsg: %+v\n", eMsg)
+	return eMsg
+}
+
+func tidyConn(c net.Conn) {
+	if pc, ok := c.(*pool.PoolConn); ok {
+		pc.MarkUnusable()
+		pc.Close()
 	}
 }
 

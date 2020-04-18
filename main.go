@@ -12,7 +12,7 @@ const (
 	//MaxCaches allowed how many caches
 	MaxCaches = 128
 	//Timeout set the limit of time out
-	Timeout = 3
+	Timeout = 4
 )
 
 var (
