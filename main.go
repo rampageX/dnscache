@@ -1,14 +1,13 @@
 package main
 
 import (
+	"flag"
 	"github.com/ztrue/tracerr"
 
+	"github.com/rs/zerolog/log"
 	"os"
 	"os/signal"
-	"strconv"
 	"time"
-	"github.com/rs/zerolog/log"
-
 )
 
 const (
@@ -20,12 +19,25 @@ const (
 
 var (
 	//Proto set the protocol type using
-	Proto = "tcp"
+	Proto = flag.String("protocol", "tcp", "查询协议")
 	//NsAddrs Nameserver addresses
 	NsAddrs = []string{
-		"208.67.222.222:443",
-		"208.67.220.220:443",
+		"223.5.5.5:53",
+		"223.6.6.6:53",
 	}
+	CnNsAddrs = []string{
+		"223.5.5.5:53",
+		"223.6.6.6:53",
+
+	}
+	WorldNsAddrs = []string{
+		"8.8.8.8:53",
+		"8.8.4.4:53",
+	}
+
+	AreaZone = flag.String("z", "cn", "区域：cn代表国内，world代表世界")
+	ListenOn = flag.String("l", "127.0.0.1:53", "监听地址和端口")
+	Help = flag.Bool("h", false, "帮助")
 )
 
 
@@ -49,31 +61,21 @@ func LogInfoF(fms string, msg ...interface{}) {
 	log.Info().Msgf(fms, msg)
 }
 
+
 func main() {
-	var host string
-	var port int
-	args := os.Args[1:]
-	argslen := len(args)
-	//fmt.Println(argslen)
-	host = "127.0.0.1"
-	port = 53
-	if argslen >= 1 {
-		host = args[0]
+	flag.Parse()
+	if *Help == true {
+		flag.PrintDefaults()
+		os.Exit(0)
 	}
-	if argslen >= 2 {
-		newport, err := strconv.Atoi(args[1])
-		if err == nil {
-			port = newport
-		}
-	}
-	if argslen >= 3 {
-		Proto = args[2]
-	}
+
 	// check network  is online
 
+	if *AreaZone != "cn" {
+		NsAddrs = WorldNsAddrs
+	}
 	server := &Server{
-		host:     host,
-		port:     port,
+		listenOn:     *ListenOn,
 		rTimeout: Timeout * time.Second,
 		wTimeout: Timeout * time.Second,
 	}

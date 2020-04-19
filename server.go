@@ -1,7 +1,6 @@
 package main
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/miekg/dns"
@@ -9,15 +8,14 @@ import (
 
 //Server the server struct
 type Server struct {
-	host     string
-	port     int
+	listenOn string
 	rTimeout time.Duration
 	wTimeout time.Duration
 }
 
 //Addr the server address
 func (s *Server) Addr() string {
-	return s.host + ":" + strconv.Itoa(s.port)
+	return s.listenOn
 }
 
 //Run set up and running the server
