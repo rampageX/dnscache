@@ -36,7 +36,8 @@ func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error
 			if err != nil {
 				eMsg := logAndProcessErr(qname, err, c)
 				if eMsg == "EOF" || strings.HasSuffix(eMsg, "use of closed network connection") {
-					fmt.Println("Try again")
+					fmt.Println("Try again after 50 millisecond")
+					time.Sleep(50 * time.Millisecond)
 					continue
 				}
 			}
@@ -51,8 +52,9 @@ func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error
 			if err != nil {
 				eMsg := logAndProcessErr(qname, err, c)
 				if eMsg == "EOF" || strings.HasSuffix(eMsg, "use of closed network connection") {
+					fmt.Println("Try again after 50 millisecond")
+					time.Sleep(50 * time.Millisecond)
 
-					fmt.Println("Try again")
 					continue
 				}
 

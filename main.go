@@ -10,7 +10,7 @@ import (
 
 const (
 	//MaxCaches allowed how many caches
-	MaxCaches = 128
+	MaxCaches = 64
 	//Timeout set the limit of time out
 	Timeout = 4
 )
@@ -59,6 +59,7 @@ func main() {
 
 	sig := make(chan os.Signal)
 	signal.Notify(sig, os.Interrupt)
+	signal.Notify(sig, os.Kill)
 
 forever:
 	for {

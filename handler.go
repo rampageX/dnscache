@@ -53,7 +53,7 @@ func (h *GODNSHandler) GetHour() string {
 // DoInitPool : Do Initialize Pool
 func (h *GODNSHandler) DoInitPool(nsaddr string) {
 	fmt.Println("DoInitPool, try to connect to ", nsaddr)
-	p, err := pool.NewChannelPool(3, 30, func() (net.Conn, error) {
+	p, err := pool.NewChannelPool(0, 16, func() (net.Conn, error) {
 		var d = net.Dialer{
 			KeepAlive: time.Duration(Timeout * 6),
 		}
