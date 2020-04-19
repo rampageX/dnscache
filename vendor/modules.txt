@@ -1,3 +1,6 @@
+# github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381
+## explicit
+github.com/logrusorgru/aurora
 # github.com/miekg/dns v1.1.29
 ## explicit
 github.com/miekg/dns
@@ -7,6 +10,15 @@ github.com/netroby/fastlru
 # github.com/pkg/errors v0.9.1
 ## explicit
 github.com/pkg/errors
+# github.com/rs/zerolog v1.18.0
+## explicit
+github.com/rs/zerolog
+github.com/rs/zerolog/internal/cbor
+github.com/rs/zerolog/internal/json
+github.com/rs/zerolog/log
+# github.com/ztrue/tracerr v0.3.0
+## explicit
+github.com/ztrue/tracerr
 # golang.org/x/crypto v0.0.0-20200414173820-0848c9571904
 ## explicit
 golang.org/x/crypto/ed25519

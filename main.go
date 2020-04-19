@@ -1,11 +1,14 @@
 package main
 
 import (
-	"fmt"
+	"github.com/ztrue/tracerr"
+
 	"os"
 	"os/signal"
 	"strconv"
 	"time"
+	"github.com/rs/zerolog/log"
+
 )
 
 const (
@@ -24,6 +27,27 @@ var (
 		"208.67.220.220:443",
 	}
 )
+
+
+/**
+ * Logging error
+ */
+func LogError(err error) {
+	log.Error().Msg(tracerr.Sprint(tracerr.Wrap(err)))
+}
+
+/**
+ * Logging info
+ */
+func LogInfo(msg string) {
+	log.Info().Msg(msg)
+}
+/**
+ * Logging info sprintf
+ */
+func LogInfoF(fms string, msg ...interface{}) {
+	log.Info().Msgf(fms, msg)
+}
 
 func main() {
 	var host string
@@ -55,7 +79,7 @@ func main() {
 	}
 
 	server.Run()
-	fmt.Println("DNS server start")
+	LogInfo("DNS server started")
 
 	sig := make(chan os.Signal)
 	signal.Notify(sig, os.Interrupt)
@@ -65,7 +89,7 @@ forever:
 	for {
 		select {
 		case <-sig:
-			fmt.Println("Signal received, now stop and exit")
+			LogInfo("Signal received, now stop and exit")
 			break forever
 		}
 	}

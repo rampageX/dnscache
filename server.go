@@ -4,8 +4,6 @@ import (
 	"strconv"
 	"time"
 
-	"fmt"
-
 	"github.com/miekg/dns"
 )
 
@@ -59,10 +57,10 @@ func (s *Server) Run() {
 
 func (s *Server) start(ds *dns.Server) {
 
-	fmt.Println("Start listener on ", ds.Net, ":", s.Addr())
+	LogInfoF("Start listener on %s:%s", ds.Net, s.Addr())
 	err := ds.ListenAndServe()
 	if err != nil {
-		fmt.Println("Start listener failed:", ds.Net, ":", s.Addr(), err.Error())
+		LogInfoF("Start listener failed: %s:%s:%+v", ds.Net, s.Addr(), err)
 	}
 
 }

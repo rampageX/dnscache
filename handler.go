@@ -52,8 +52,8 @@ func (h *GODNSHandler) GetHour() string {
 
 // DoInitPool : Do Initialize Pool
 func (h *GODNSHandler) DoInitPool(nsaddr string) {
-	fmt.Println("DoInitPool, try to connect to ", nsaddr)
-	p, err := pool.NewChannelPool(0, 16, func() (net.Conn, error) {
+	LogInfoF("DoInitPool, try to connect to %v", nsaddr)
+	p, err := pool.NewChannelPool(0, 48, func() (net.Conn, error) {
 		var d = net.Dialer{
 			KeepAlive: time.Duration(Timeout * 6),
 		}
@@ -83,7 +83,7 @@ func (h *GODNSHandler) do(Net string, w dns.ResponseWriter, req *dns.Msg) {
 	if IPQuery > 0 {
 		mesg, ok := h.Cache.Get(key)
 		if ok == true {
-			//fmt.Println("Hit cache", Q.String())
+			LogInfoF("Hit cache:%s", Q.String())
 			rmesg := mesg.(*dns.Msg)
 			rmesg.Id = req.Id
 			w.WriteMsg(BuildDNSMsg(rmesg))
