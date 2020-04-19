@@ -33,7 +33,9 @@ func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error
 
 	L := func(nsPool pool.Pool) {
 
-		for {
+		var i int = 0;
+		for i < 6 {
+			i = i + 1
 			//r, rtt, err := c.Exchange(req, nameserver)
 
 			c, err := nsPool.Get()

@@ -55,7 +55,7 @@ func (h *GODNSHandler) DoInitPool(nsaddr string) {
 	LogInfoF("DoInitPool, try to connect to %v", nsaddr)
 	p, err := pool.NewChannelPool(0, 48, func() (net.Conn, error) {
 		var d = net.Dialer{
-			KeepAlive: time.Duration(Timeout * 6),
+			KeepAlive: time.Duration(Timeout * 3),
 		}
 		return d.Dial("tcp", nsaddr)
 	})
@@ -66,6 +66,7 @@ func (h *GODNSHandler) DoInitPool(nsaddr string) {
 
 // PreparePool : To prepare pool for use
 func (h *GODNSHandler) PreparePool() {
+
 	for _, nsaddr := range NsAddrs {
 		go h.DoInitPool(nsaddr)
 	}
